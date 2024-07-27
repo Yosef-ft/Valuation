@@ -1,3 +1,5 @@
+import datetime
+
 import numpy as np
 import pandas as pd
 
@@ -96,21 +98,67 @@ class EquityMulti(EnterpriseMulti):
     
 
     def dividend_yield(self) -> pd.DataFrame:
-        self.Dividends = pd.DataFrame(pd.to_datetime(self.Dividends.index), self.Dividends.values ).reset_index()
-        self.Dividends.set_index('Date', inplace=True)
-        self.Dividends.rename({'index': 'Quarterly dividends'}, axis = 1, inplace=True)
-        self.Dividends = self.Dividends.groupby(self.Dividends.index.year)['Quarterly dividends'].sum()
-        self.Dividends = pd.DataFrame(self.Dividends)
-        self.Dividends.rename({'Quarterly dividends' : 'Yearly dividends'}, axis=1, inplace=True)
-        self.Dividends.sort_index(ascending=False, inplace=True)
+        self.dividends = pd.DataFrame(pd.to_datetime(self.Dividends.index), self.Dividends.values ).reset_index()
+        self.dividends.set_index('Date', inplace=True)
+        self.dividends.rename({'index': 'Quarterly dividends'}, axis = 1, inplace=True)
+        self.dividends = self.dividends.groupby(self.dividends.index.year)['Quarterly dividends'].sum()
+        self.dividends = pd.DataFrame(self.dividends)
+        self.dividends.rename({'Quarterly dividends' : 'Yearly dividends'}, axis=1, inplace=True)
+        self.dividends.sort_index(ascending=False, inplace=True)
 
-        self.Dividends['Dividend yields(%)'] = (self.Dividends['Yearly dividends'] / self._latest_price) * 100
-        self.Dividends.drop('Yearly dividends', axis =1, inplace=True)
+        self.dividends['Dividend yields(%)'] = (self.dividends['Yearly dividends'] / self._latest_price) * 100
+        self.dividends.drop('Yearly dividends', axis =1, inplace=True)
 
-        return self.Dividends.head()
+        return self.dividends.head()
     
 
+class DDM(EnterpriseMulti):
+    def __init__(self, symbol: str, req_return: float):
+        super().__init__(symbol)
+        self.req_return = req_return / 100
 
+    def ddm_calc(self) -> float:
+        self.dividends = pd.DataFrame(self.Dividends)
+        self.dividends = self.dividends.groupby(self.dividends.index.year)['Dividends'].sum()
+        self.dividends = pd.DataFrame(self.dividends).sort_index(ascending=False)
+
+        growth_rate = self.dividends['Dividends'].pct_change().mean()
+
+        self.dividends.drop(self.dividends.index[self.dividends.index == datetime.datetime.now().year], inplace = True)
+        self.dividends = self.dividends.sort_index()
+        self.dividends.index = pd.to_datetime(self.dividends.index, format='%Y')
+
+        # Forecast for the next 5 years
+        for i in range(5):
+            next_year = self.dividends.iloc[-1].values + (growth_rate * self.dividends.iloc[-1].values)
+            self.dividends.loc[pd.to_datetime(self.dividends.index.max().year + 1, format='%Y')] = next_year
+
+        self.dividends.index = self.dividends.index.year
+        self.dividends.sort_index(ascending=False, inplace=True)
+
+        dividends_5y = self.dividends.head()
+
+        # Calculate the DDM price for the forecaseted 5 years
+        counter = 1
+        DDM_price = 0
+        for i in range(len(dividends_5y) - 1):
+            DDM_price += (dividends_5y.iloc[-1-i].values) / ((1 + self.req_return) ** counter)
+            counter += 1
+
+
+        DDM_price += (self.req_return + dividends_5y.iloc[0].values) / ((1 + self.req_return) ** counter)     
+
+        return DDM_price   
+    
+    def price(self) -> str:
+        DDM_price = self.ddm_calc()
+
+        if self._latest_price > DDM_price:
+            return 'Overpriced! This is a sell signal.'
+        else:
+            return 'Underpriced! This is a buy signal'
+
+            
 
     
 
@@ -120,3 +168,6 @@ if __name__ == "__main__":
 
     Equit = EquityMulti('MSFT')
     print(Equit.dividend_yield())
+
+    ddm = DDM('MSFT', 10)
+    print(ddm.price())
