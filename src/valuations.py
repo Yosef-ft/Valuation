@@ -187,126 +187,132 @@ if model == 'Enterprice Ratios':
 
     symbol = st.text_input('Please enter the company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
     if symbol != '':
-        enterM = EnterpriseMulti(symbol)
-        company_name = yf.Ticker(symbol).info['longBusinessSummary'].split()[0]
-        
-        col1, col2, col3= st.columns(3)
-        col4, col5, col6= st.columns(3)
-        col7, col8, col9= st.columns(3)
+        try:
+            enterM = EnterpriseMulti(symbol)
 
-
-
-        with col1:
-            st.subheader('')
-
-            st.write('Enterprise value / Invested Capital ratio')
-            EV_capital = enterM._EV_Capital()
-            # st.write(EV_capital)
-
-            fig = px.line(EV_capital, y='EV/Invested Capital')
-            st.plotly_chart(fig)
-
-
-        with col2:
-            st.subheader(company_name)
-
-            st.write('Enterprise value / Revenue ratio')
-            EV_Revenue = enterM._EV_Revenue()
-            # st.write(EV_Revenue)
-
-            fig = px.line(EV_Revenue, y='EV/Revenue')
-            st.plotly_chart(fig)
-
-        with col3:
-            st.subheader('')
-
-            st.write('Enterprise value / EBITDA ratio')
-            EV_EBITDA = enterM._EV_EBITDA()
-            # st.write(EV_EBITDA)
-
-            fig = px.line(EV_EBITDA, y='EV/EBITDA')
-            st.plotly_chart(fig)
-
-        symbol2 = ''
-
-        if symbol2 == '':
-            st.write(f'Compare {company_name} with another company?\n If yes Enter the company\'s symbol ')
-        
-            symbol2 = st.text_input('Please enter the second company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
-        if symbol2 != '':
-            enterM2 = EnterpriseMulti(symbol2)
-            company_name2 = yf.Ticker(symbol2).info['longBusinessSummary'].split()[0]
+            company_name = yf.Ticker(symbol).info['longBusinessSummary'].split()[0]
             
-            with col4:
+            col1, col2, col3= st.columns(3)
+            col4, col5, col6= st.columns(3)
+            col7, col8, col9= st.columns(3)
+
+
+
+            with col1:
                 st.subheader('')
 
                 st.write('Enterprise value / Invested Capital ratio')
-                EV_capital2 = enterM2._EV_Capital()
+                EV_capital = enterM._EV_Capital()
                 # st.write(EV_capital)
 
-                fig = px.line(EV_capital2, y='EV/Invested Capital')
+                fig = px.line(EV_capital, y='EV/Invested Capital')
                 st.plotly_chart(fig)
 
 
-            with col5:
-                st.subheader(company_name2)
+            with col2:
+                st.subheader(company_name)
 
                 st.write('Enterprise value / Revenue ratio')
-                EV_Revenue2 = enterM2._EV_Revenue()
+                EV_Revenue = enterM._EV_Revenue()
                 # st.write(EV_Revenue)
 
-                fig = px.line(EV_Revenue2, y='EV/Revenue')
+                fig = px.line(EV_Revenue, y='EV/Revenue')
                 st.plotly_chart(fig)
 
-            with col6:
+            with col3:
                 st.subheader('')
 
                 st.write('Enterprise value / EBITDA ratio')
-                EV_EBITDA2 = enterM2._EV_EBITDA()
+                EV_EBITDA = enterM._EV_EBITDA()
                 # st.write(EV_EBITDA)
 
-                fig = px.line(EV_EBITDA2, y='EV/EBITDA')
+                fig = px.line(EV_EBITDA, y='EV/EBITDA')
                 st.plotly_chart(fig)
 
-            with col7:
-                st.subheader('')
+            symbol2 = ''
 
-                st.write('Enterprise value / Invested Capital ratio')
+            if symbol2 == '':
+                st.write(f'Compare {company_name} with another company?\n If yes Enter the company\'s symbol ')
+            
+                symbol2 = st.text_input('Please enter the second company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
+            if symbol2 != '':
+                try: 
+                    enterM2 = EnterpriseMulti(symbol2)
+                    company_name2 = yf.Ticker(symbol2).info['longBusinessSummary'].split()[0]
+                    
+                    with col4:
+                        st.subheader('')
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=EV_capital.index, y=EV_capital['EV/Invested Capital'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=EV_capital2.index, y=EV_capital2['EV/Invested Capital'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                        st.write('Enterprise value / Invested Capital ratio')
+                        EV_capital2 = enterM2._EV_Capital()
+                        # st.write(EV_capital)
 
-                st.plotly_chart(fig2)
+                        fig = px.line(EV_capital2, y='EV/Invested Capital')
+                        st.plotly_chart(fig)
 
-            with col8:
-                st.subheader(f'{company_name} vs {company_name2}')
 
-                st.write('Enterprise value / Revenue ratio')
+                    with col5:
+                        st.subheader(company_name2)
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=EV_Revenue.index, y=EV_Revenue['EV/Revenue'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=EV_Revenue2.index, y=EV_Revenue2['EV/Revenue'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                        st.write('Enterprise value / Revenue ratio')
+                        EV_Revenue2 = enterM2._EV_Revenue()
+                        # st.write(EV_Revenue)
 
-                st.plotly_chart(fig2)   
+                        fig = px.line(EV_Revenue2, y='EV/Revenue')
+                        st.plotly_chart(fig)
 
-            with col9:             
-                st.subheader('')
+                    with col6:
+                        st.subheader('')
 
-                st.write('Enterprise value / EBITDA ratio')
+                        st.write('Enterprise value / EBITDA ratio')
+                        EV_EBITDA2 = enterM2._EV_EBITDA()
+                        # st.write(EV_EBITDA)
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=EV_EBITDA.index, y=EV_EBITDA['EV/EBITDA'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=EV_EBITDA2.index, y=EV_EBITDA2['EV/EBITDA'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                        fig = px.line(EV_EBITDA2, y='EV/EBITDA')
+                        st.plotly_chart(fig)
 
-                st.plotly_chart(fig2)                
+                    with col7:
+                        st.subheader('')
 
+                        st.write('Enterprise value / Invested Capital ratio')
+
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=EV_capital.index, y=EV_capital['EV/Invested Capital'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=EV_capital2.index, y=EV_capital2['EV/Invested Capital'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2)
+
+                    with col8:
+                        st.subheader(f'{company_name} vs {company_name2}')
+
+                        st.write('Enterprise value / Revenue ratio')
+
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=EV_Revenue.index, y=EV_Revenue['EV/Revenue'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=EV_Revenue2.index, y=EV_Revenue2['EV/Revenue'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2)   
+
+                    with col9:             
+                        st.subheader('')
+
+                        st.write('Enterprise value / EBITDA ratio')
+
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=EV_EBITDA.index, y=EV_EBITDA['EV/EBITDA'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=EV_EBITDA2.index, y=EV_EBITDA2['EV/EBITDA'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2)    
+                except Exception as e:
+                    st.write(f'Sorry we were not able to retrive {symbol2}. Please try with another symbol or check if the symbol exists.')                            
+        except Exception as e:
+            st.write(f'Sorry we were not able to retrive {symbol}. Please try with another symbol or check if the symbol exists.')
 
     else:
         st.write('Enter a symbol or ticker for the company of your choice')
@@ -318,151 +324,156 @@ elif model == 'Equity Ratios':
 
     symbol = st.text_input('Please enter the company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
     if symbol != '':
-        equityM = EquityMulti(symbol)
-        company_name = yf.Ticker(symbol).info['longBusinessSummary'].split()[0]
-        
-        col1, col2, col3, col3a= st.columns(4)
-        col4, col5, col6, col6a= st.columns(4)
-        col7, col8, col9, col9a= st.columns(4)
-
-
-
-        with col1:
-            st.subheader('')
-
-            st.write('P/E ratio')
-            P_E = equityM.P_E()
-
-            fig = px.line(P_E, y='P/E ratio')
-            st.plotly_chart(fig)
-
-
-        with col2:
-            st.subheader('')
-
-            st.write('Price/Book ratio')
-            Price_Book = equityM.Price_Book()
-
-            fig = px.line(Price_Book, y='Price/Book')
-            st.plotly_chart(fig)
-
-        with col3:
-            st.subheader(company_name)
-
-            st.write('Price/Sales ratio')
-            Price_Sales = equityM.Price_Sales()
-
-            fig = px.line(Price_Sales, y='Price/Sales')
-            st.plotly_chart(fig)
-
-        with col3a:
-            st.subheader('')
-
-            st.write('Dividend yields(%)')
-            div_yield = equityM.dividend_yield()
-
-            fig = px.line(div_yield, y='Dividend yields(%)')
-            st.plotly_chart(fig)
-
-        symbol2 = ''
-
-        if symbol2 == '':
-            st.write(f'Compare {company_name} with another company?\n If yes Enter the company\'s symbol ')
-        
-            symbol2 = st.text_input('Please enter the second company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
-        if symbol2 != '':
-            equityM2 = EquityMulti(symbol2)
-            company_name2 = yf.Ticker(symbol2).info['longBusinessSummary'].split()[0]
+        try:
+            equityM = EquityMulti(symbol)
+            company_name = yf.Ticker(symbol).info['longBusinessSummary'].split()[0]
             
-            with col4:
+            col1, col2, col3, col3a= st.columns(4)
+            col4, col5, col6, col6a= st.columns(4)
+            col7, col8, col9, col9a= st.columns(4)
+
+
+
+            with col1:
                 st.subheader('')
 
                 st.write('P/E ratio')
-                P_E2 = equityM2.P_E()
+                P_E = equityM.P_E()
 
-                fig = px.line(P_E2, y='P/E ratio')
+                fig = px.line(P_E, y='P/E ratio')
                 st.plotly_chart(fig)
 
 
-            with col5:
+            with col2:
                 st.subheader('')
 
                 st.write('Price/Book ratio')
-                Price_Book2 = equityM2.Price_Book()
+                Price_Book = equityM.Price_Book()
 
-                fig = px.line(Price_Book2, y='Price/Book')
+                fig = px.line(Price_Book, y='Price/Book')
                 st.plotly_chart(fig)
 
-            with col6:
-                st.subheader(company_name2)
+            with col3:
+                st.subheader(company_name)
 
                 st.write('Price/Sales ratio')
-                Price_Sales2 = equityM2.Price_Sales()
+                Price_Sales = equityM.Price_Sales()
 
-                fig = px.line(Price_Sales2, y='Price/Sales')
+                fig = px.line(Price_Sales, y='Price/Sales')
                 st.plotly_chart(fig)
 
-            with col6a:
+            with col3a:
                 st.subheader('')
 
                 st.write('Dividend yields(%)')
-                div_yield2 = equityM2.dividend_yield()
+                div_yield = equityM.dividend_yield()
 
-                fig = px.line(div_yield2, y='Dividend yields(%)')
+                fig = px.line(div_yield, y='Dividend yields(%)')
                 st.plotly_chart(fig)
 
-            with col7:
-                st.subheader('')
+            symbol2 = ''
 
-                st.write('P/E ratio ratio')
+            if symbol2 == '':
+                st.write(f'Compare {company_name} with another company?\n If yes Enter the company\'s symbol ')
+            
+                symbol2 = st.text_input('Please enter the second company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
+            if symbol2 != '':
+                try:
+                    equityM2 = EquityMulti(symbol2)
+                    company_name2 = yf.Ticker(symbol2).info['longBusinessSummary'].split()[0]
+                    
+                    with col4:
+                        st.subheader('')
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=P_E.index, y=P_E['P/E ratio'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=P_E2.index, y=P_E2['P/E ratio'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                        st.write('P/E ratio')
+                        P_E2 = equityM2.P_E()
 
-                st.plotly_chart(fig2)
+                        fig = px.line(P_E2, y='P/E ratio')
+                        st.plotly_chart(fig)
 
-            with col8:
-                st.subheader(f'{company_name} --- versus-- ')
 
-                st.write('Price/Book ratio')
+                    with col5:
+                        st.subheader('')
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=Price_Book.index, y=Price_Book['Price/Book'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=Price_Book2.index, y=Price_Book2['Price/Book'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                        st.write('Price/Book ratio')
+                        Price_Book2 = equityM2.Price_Book()
 
-                st.plotly_chart(fig2)   
+                        fig = px.line(Price_Book2, y='Price/Book')
+                        st.plotly_chart(fig)
 
-            with col9:             
-                st.subheader(f'{company_name2}')
+                    with col6:
+                        st.subheader(company_name2)
 
-                st.write('Price/Sales ratio')
+                        st.write('Price/Sales ratio')
+                        Price_Sales2 = equityM2.Price_Sales()
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=Price_Sales.index, y=Price_Sales['Price/Sales'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=Price_Sales2.index, y=Price_Sales2['Price/Sales'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                        fig = px.line(Price_Sales2, y='Price/Sales')
+                        st.plotly_chart(fig)
 
-                st.plotly_chart(fig2)     
+                    with col6a:
+                        st.subheader('')
 
-            with col9a:
-                st.subheader('')
+                        st.write('Dividend yields(%)')
+                        div_yield2 = equityM2.dividend_yield()
 
-                st.write('Dividend yields(%)')      
+                        fig = px.line(div_yield2, y='Dividend yields(%)')
+                        st.plotly_chart(fig)
 
-                fig2 = go.Figure()
-                fig2.add_trace(go.Line(x=div_yield.index, y=div_yield['Dividend yields(%)'], name=company_name,
-                                          mode='lines', line=dict(color='Blue')))
-                fig2.add_trace(go.Line(x=div_yield2.index, y=div_yield2['Dividend yields(%)'], name=company_name2,
-                                          mode='lines', line=dict(color='Red')))
+                    with col7:
+                        st.subheader('')
 
-                st.plotly_chart(fig2)  
+                        st.write('P/E ratio ratio')
 
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=P_E.index, y=P_E['P/E ratio'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=P_E2.index, y=P_E2['P/E ratio'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2)
+
+                    with col8:
+                        st.subheader(f'{company_name} --- versus-- ')
+
+                        st.write('Price/Book ratio')
+
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=Price_Book.index, y=Price_Book['Price/Book'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=Price_Book2.index, y=Price_Book2['Price/Book'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2)   
+
+                    with col9:             
+                        st.subheader(f'{company_name2}')
+
+                        st.write('Price/Sales ratio')
+
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=Price_Sales.index, y=Price_Sales['Price/Sales'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=Price_Sales2.index, y=Price_Sales2['Price/Sales'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2)     
+
+                    with col9a:
+                        st.subheader('')
+
+                        st.write('Dividend yields(%)')      
+
+                        fig2 = go.Figure()
+                        fig2.add_trace(go.Line(x=div_yield.index, y=div_yield['Dividend yields(%)'], name=company_name,
+                                                mode='lines', line=dict(color='Blue')))
+                        fig2.add_trace(go.Line(x=div_yield2.index, y=div_yield2['Dividend yields(%)'], name=company_name2,
+                                                mode='lines', line=dict(color='Red')))
+
+                        st.plotly_chart(fig2) 
+                except Exception as e:
+                    st.write(f'Sorry we were not able to retrive {symbol}. Please try with another symbol or check if the symbol exists.')
+        except Exception as e:
+            st.write(f'Sorry we were not able to retrive {symbol}. Please try with another symbol or check if the symbol exists.')
 
     else:
         st.write('Enter a symbol or ticker for the company of your choice')    
@@ -474,9 +485,13 @@ elif model == 'Discount Dividend Model(DDM)':
     req_return = st.number_input('Enter the required rate of return as a percentage for the year: ')
 
     if symbol != '':
-        ddm = DDM(symbol, req_return)
-        st.header('')
-        st.subheader(ddm.price())
+        try:
+            ddm = DDM(symbol, req_return)
+            company_name = yf.Ticker(symbol).info['longBusinessSummary'].split()[0]
+            st.header('')
+            st.subheader(f'The company {company_name} is {ddm.price()}')
+        except Exception as e:
+            st.write(f'Sorry we were not able to retrive {symbol}. Please try with another symbol or check if the symbol exists.')
     else:
         st.write('Enter a symbol or ticker for the company of your choice')
 
