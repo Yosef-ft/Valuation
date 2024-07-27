@@ -44,7 +44,7 @@ plotly
 prompt_toolkit
 protobuf
 psutil
-pure_eval=
+pure_eval
 pyarrow
 pydeck
 Pygments
