@@ -82,6 +82,14 @@ class EquityMulti(EnterpriseMulti):
         ratio = pd.DataFrame(ratio, columns=['Price/Book'])
 
         return ratio
+    
+    def Price_Sales(self):
+        ratio = self.market_capitalization / self._Income_statement['Total Revenue']
+        ratio = pd.DataFrame(ratio, columns=['Price/Sales'])
+
+        return ratio
+    
+
 
 
     
@@ -91,4 +99,4 @@ if __name__ == "__main__":
     print(enterM._EV_Capital())
 
     Equit = EquityMulti('MSFT')
-    print(Equit.Price_Book())
+    print(Equit.Price_Sales())
