@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import numpy as np
 import pandas as pd
@@ -44,29 +45,32 @@ class EnterpriseMulti:
     def _EV_Revenue(self) -> pd.DataFrame:
         ratios = self.enterprise_value / self._Income_statement['Total Revenue']
         ratios = pd.DataFrame(ratios, columns=['EV/Revenue'])
+        ratios.dropna(inplace=True)
 
-        ratios.index = ratios.index.year
         ratios.index.name = 'Year'
+        ratios.index = pd.to_datetime(ratios.index, format='%Y').year   
 
-        return ratios
+        return ratios.sort_index(ascending=False)
     
     def _EV_EBITDA(self) -> pd.DataFrame:
         ratios = self.enterprise_value / self._Income_statement['EBITDA']
         ratios = pd.DataFrame(ratios, columns=['EV/EBITDA'])
+        ratios.dropna(inplace=True)
 
-        ratios.index = ratios.index.year
         ratios.index.name = 'Year'
+        ratios.index = pd.to_datetime(ratios.index, format='%Y').year   
 
-        return ratios
+        return ratios.sort_index(ascending=False)
     
     def _EV_Capital(self) -> pd.DataFrame:
         ratios = self.enterprise_value / self._Balance_sheet['Invested Capital']
         ratios = pd.DataFrame(ratios, columns=['EV/Invested Capital'])
+        ratios.dropna(inplace=True)
 
-        ratios.index = ratios.index.year
-        ratios.index.name = 'Year'        
+        ratios.index.name = 'Year'
+        ratios.index = pd.to_datetime(ratios.index, format='%Y').year       
 
-        return ratios
+        return ratios.sort_index(ascending=False)
     
 
 class EquityMulti(EnterpriseMulti):
@@ -158,16 +162,118 @@ class DDM(EnterpriseMulti):
         else:
             return 'Underpriced! This is a buy signal'
 
-            
+
+
+st.set_page_config(layout="wide")
+
+st.title('Stock Valuator')         
+with st.expander('About this App'):
+    st.write('This app calculates all enterprice ratios, equity ratios and also performs Discount Dividend Model(DDM) to identify if a stock is overpriced, underpriced')
+    # st.image('https://th.bing.com/th/id/R.43137e38ed9b7298607ae8137c89b524?rik=Df4TCFL25fXEHQ&pid=ImgRaw&r=0', width=250)
+
+st.sidebar.header('Chose your model')
+model = st.sidebar.selectbox('Choose your value model', ['Enterprice Ratios', 'Equity Ratios', 'Discount Dividend Model(DDM)', 'Discount Cash Flow'])
+
+
+if model == 'Enterprice Ratios':
+    st.header('Enterprice Ratios')
+
+    symbol = st.text_input('Please enter the company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
+    if symbol != '':
+        enterM = EnterpriseMulti(symbol)
+        company_name = yf.Ticker(symbol).info['longBusinessSummary'].split()[0]
+        
+        col1, col2, col3= st.columns(3)
+        with col1:
+            st.write('Enterprise value / Invested Capital ratio')
+            EV_capital = enterM._EV_Capital()
+            # st.write(EV_capital)
+
+            fig = px.line(EV_capital, y='EV/Invested Capital')
+            st.plotly_chart(fig)
+
+
+        with col2:
+            st.write('Enterprise value / Revenue ratio')
+            EV_Revenue = enterM._EV_Revenue()
+            # st.write(EV_Revenue)
+
+            fig = px.line(EV_Revenue, y='EV/Revenue')
+            st.plotly_chart(fig)
+
+        with col3:
+            st.write('Enterprise value / EBITDA ratio')
+            EV_EBITDA = enterM._EV_EBITDA()
+            # st.write(EV_EBITDA)
+
+            fig = px.line(EV_EBITDA, y='EV/EBITDA')
+            st.plotly_chart(fig)
+
+        st.write(f'Compare {company_name} with another company')
+        
+        if st.button('Yes'):
+            symbol2 = st.text_input('Please enter the second company\'s ticker to evaluate the ratios (**Example** Microsoft would be MSFT)').upper()
+            if symbol2 != '':
+                enterM2 = EnterpriseMulti(symbol2)
+                company_name = yf.Ticker(symbol2).info['longBusinessSummary'].split()[0]
+                
+                col4, col5, col6= st.columns(3)
+                with col4:
+                    st.write('Enterprise value / Invested Capital ratio')
+                    EV_capital2 = enterM2._EV_Capital()
+                    # st.write(EV_capital)
+
+                    fig = px.line(EV_capital2, y='EV/Invested Capital')
+                    st.plotly_chart(fig)
+
+
+                with col5:
+                    st.write('Enterprise value / Revenue ratio')
+                    EV_Revenue2 = enterM2._EV_Revenue()
+                    # st.write(EV_Revenue)
+
+                    fig = px.line(EV_Revenue2, y='EV/Revenue')
+                    st.plotly_chart(fig)
+
+                with col6:
+                    st.write('Enterprise value / EBITDA ratio')
+                    EV_EBITDA2 = enterM2._EV_EBITDA()
+                    # st.write(EV_EBITDA)
+
+                    fig = px.line(EV_EBITDA2, y='EV/EBITDA')
+                    st.plotly_chart(fig)
+            else:
+                st.write('Enter a symbol or ticker for the company of your choice')
+
+    else:
+        st.write('Enter a symbol or ticker for the company of your choice')
 
     
 
-if __name__ == "__main__":
-    enterM = EnterpriseMulti('MSFT')
-    print(enterM._EV_Capital())
+elif model == 'Equity Ratios':
+    st.header('Equity Ratios')
 
-    Equit = EquityMulti('MSFT')
-    print(Equit.dividend_yield())
+elif model == 'Discount Dividend Model(DDM)':
+    st.header('Discount Dividend Model')
 
-    ddm = DDM('MSFT', 10)
-    print(ddm.price())
+elif model == 'Discount Cash Flow':
+    st.header('Discount Cash Flow')
+    my_bar = st.progress(0)
+    
+    for percent_complete in range(33):
+        time.sleep(0.09)
+        my_bar.progress(percent_complete + 1)
+
+    
+    st.subheader('Comming soon')
+    st.write('Site under construction')
+
+# if __name__ == "__main__":
+#     enterM = EnterpriseMulti('MSFT')
+#     print(enterM._EV_Capital())
+
+#     Equit = EquityMulti('MSFT')
+#     print(Equit.dividend_yield())
+
+#     ddm = DDM('MSFT', 10)
+#     print(ddm.price())
