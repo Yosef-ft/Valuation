@@ -25,6 +25,14 @@ class EnterpriseMulti:
         self.equity_value = self._Balance_sheet['Ordinary Shares Number'] * self._latest_price
         self.enterprise_value = self.equity_value + self._Balance_sheet['Net Debt']
 
+        self.market_capitalization = self._Balance_sheet['Ordinary Shares Number'] * self._latest_price
+        # calculating net book value 
+        current_liabilities = self._Balance_sheet['Current Liabilities'] + self._Balance_sheet['Other Current Liabilities'] + self._Balance_sheet['Current Deferred Liabilities']
+        non_current_liabilities = self._Balance_sheet['Non Current Deferred Liabilities'] + self._Balance_sheet['Other Non Current Liabilities'] + self._Balance_sheet['Non Current Deferred Liabilities']
+        self._Balance_sheet['Total Liabilities'] = current_liabilities + non_current_liabilities
+        self.Net_book_value = self._Balance_sheet['Total Assets'] - self._Balance_sheet['Total Liabilities'] - self._Balance_sheet['Total Equity Gross Minority Interest']
+
+
     
     def _EV_Revenue(self) -> pd.DataFrame:
         ratios = self.enterprise_value / self._Income_statement['Total Revenue']
@@ -54,6 +62,29 @@ class EnterpriseMulti:
         return ratios
     
 
+class EquityMulti(EnterpriseMulti):
+    def __init__(self, symbol: str):
+        super().__init__(symbol)
 
-        
 
+    def P_E(self) -> pd.DataFrame:
+        ratios = self._latest_price / self._Income_statement['Diluted EPS']
+        ratios = pd.DataFrame(ratios)
+        ratios.rename({'Diluted EPS': 'P/E ratio'}, axis =1, inplace=True )
+
+        ratios.index = ratios.index.year
+        ratios.index.name = 'Year'          
+
+        return ratios
+    
+
+
+
+    
+
+if __name__ == "__main__":
+    enterM = EnterpriseMulti('MSFT')
+    print(enterM._EV_Capital())
+
+    Equit = EquityMulti('MSFT')
+    print(Equit.P_E())
