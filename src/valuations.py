@@ -117,10 +117,16 @@ class EquityMulti(EnterpriseMulti):
         return self.dividends.head()
     
 
-class DDM(EnterpriseMulti):
+class DDM:
     def __init__(self, symbol: str, req_return: float):
-        super().__init__(symbol)
+        self.symbol= symbol
         self.req_return = req_return / 100
+
+        ticker =yf.Ticker(self.symbol)
+        self.Dividends = ticker.dividends
+
+        self._latest_price = float(ticker.history(period='1d')['Close'].values[-1])
+
 
     def ddm_calc(self) -> float:
         self.dividends = pd.DataFrame(self.Dividends)
@@ -465,7 +471,14 @@ elif model == 'Discount Dividend Model(DDM)':
     st.header('Discount Dividend Model')
 
     symbol = st.text_input('Please enter the company\'s ticker to evaluate the DDM to determine if the price is overprice/underpriced (**Example** Microsoft would be MSFT)').upper()
-    
+    req_return = st.number_input('Enter the required rate of return as a percentage for the year: ')
+
+    if symbol != '':
+        ddm = DDM(symbol, req_return)
+        st.header('')
+        st.subheader(ddm.price())
+    else:
+        st.write('Enter a symbol or ticker for the company of your choice')
 
 
 
