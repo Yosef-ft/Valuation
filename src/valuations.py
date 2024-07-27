@@ -25,13 +25,18 @@ class EnterpriseMulti:
         self.equity_value = self._Balance_sheet['Ordinary Shares Number'] * self._latest_price
         self.enterprise_value = self.equity_value + self._Balance_sheet['Net Debt']
 
+        # For equity ratios
         self.market_capitalization = self._Balance_sheet['Ordinary Shares Number'] * self._latest_price
+
         # calculating net book value 
         current_liabilities = self._Balance_sheet['Current Liabilities'] + self._Balance_sheet['Other Current Liabilities'] + self._Balance_sheet['Current Deferred Liabilities']
         non_current_liabilities = self._Balance_sheet['Non Current Deferred Liabilities'] + self._Balance_sheet['Other Non Current Liabilities'] + self._Balance_sheet['Non Current Deferred Liabilities']
         self._Balance_sheet['Total Liabilities'] = current_liabilities + non_current_liabilities
         self.Net_book_value = self._Balance_sheet['Total Assets'] - self._Balance_sheet['Total Liabilities'] - self._Balance_sheet['Total Equity Gross Minority Interest']
 
+        # For Dividend yield
+        ticker =yf.Ticker(self.symbol)
+        self.Dividends = ticker.dividends
 
     
     def _EV_Revenue(self) -> pd.DataFrame:
@@ -77,17 +82,32 @@ class EquityMulti(EnterpriseMulti):
 
         return ratios
     
-    def Price_Book(self):
+    def Price_Book(self) -> pd.DataFrame:
         ratio = self.market_capitalization / self.Net_book_value
         ratio = pd.DataFrame(ratio, columns=['Price/Book'])
 
         return ratio
     
-    def Price_Sales(self):
+    def Price_Sales(self) -> pd.DataFrame:
         ratio = self.market_capitalization / self._Income_statement['Total Revenue']
         ratio = pd.DataFrame(ratio, columns=['Price/Sales'])
 
         return ratio
+    
+
+    def dividend_yield(self) -> pd.DataFrame:
+        self.Dividends = pd.DataFrame(pd.to_datetime(self.Dividends.index), self.Dividends.values ).reset_index()
+        self.Dividends.set_index('Date', inplace=True)
+        self.Dividends.rename({'index': 'Quarterly dividends'}, axis = 1, inplace=True)
+        self.Dividends = self.Dividends.groupby(self.Dividends.index.year)['Quarterly dividends'].sum()
+        self.Dividends = pd.DataFrame(self.Dividends)
+        self.Dividends.rename({'Quarterly dividends' : 'Yearly dividends'}, axis=1, inplace=True)
+        self.Dividends.sort_index(ascending=False, inplace=True)
+
+        self.Dividends['Dividend yields(%)'] = (self.Dividends['Yearly dividends'] / self._latest_price) * 100
+        self.Dividends.drop('Yearly dividends', axis =1, inplace=True)
+
+        return self.Dividends.head()
     
 
 
@@ -99,4 +119,4 @@ if __name__ == "__main__":
     print(enterM._EV_Capital())
 
     Equit = EquityMulti('MSFT')
-    print(Equit.Price_Sales())
+    print(Equit.dividend_yield())
