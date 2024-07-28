@@ -201,33 +201,41 @@ if model == 'Enterprice Ratios':
             with col1:
                 st.subheader('')
 
-                st.write('Enterprise value / Invested Capital ratio')
                 EV_capital = enterM._EV_Capital()
                 # st.write(EV_capital)
+                if EV_capital.shape[0] != 0:
+                    st.write('Enterprise value / Invested Capital ratio')
 
-                fig = px.line(EV_capital, y='EV/Invested Capital')
-                st.plotly_chart(fig)
+                    fig = px.line(EV_capital, y='EV/Invested Capital')
+                    st.plotly_chart(fig)
+                else:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+
 
 
             with col2:
                 st.subheader(company_name)
 
-                st.write('Enterprise value / Revenue ratio')
                 EV_Revenue = enterM._EV_Revenue()
                 # st.write(EV_Revenue)
-
-                fig = px.line(EV_Revenue, y='EV/Revenue')
-                st.plotly_chart(fig)
+                if EV_Revenue.shape[0] == 0:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+                else:
+                    st.write('Enterprise value / Revenue ratio')
+                    fig = px.line(EV_Revenue, y='EV/Revenue')
+                    st.plotly_chart(fig)
 
             with col3:
                 st.subheader('')
 
-                st.write('Enterprise value / EBITDA ratio')
                 EV_EBITDA = enterM._EV_EBITDA()
                 # st.write(EV_EBITDA)
-
-                fig = px.line(EV_EBITDA, y='EV/EBITDA')
-                st.plotly_chart(fig)
+                if EV_EBITDA.shape[0] == 0:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+                else:
+                    st.write('Enterprise value / EBITDA ratio')
+                    fig = px.line(EV_EBITDA, y='EV/EBITDA')
+                    st.plotly_chart(fig)
 
             symbol2 = ''
 
@@ -243,33 +251,39 @@ if model == 'Enterprice Ratios':
                     with col4:
                         st.subheader('')
 
-                        st.write('Enterprise value / Invested Capital ratio')
                         EV_capital2 = enterM2._EV_Capital()
                         # st.write(EV_capital)
-
-                        fig = px.line(EV_capital2, y='EV/Invested Capital')
-                        st.plotly_chart(fig)
+                        if EV_capital2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('Enterprise value / Invested Capital ratio')
+                            fig = px.line(EV_capital2, y='EV/Invested Capital')
+                            st.plotly_chart(fig)
 
 
                     with col5:
                         st.subheader(company_name2)
 
-                        st.write('Enterprise value / Revenue ratio')
                         EV_Revenue2 = enterM2._EV_Revenue()
                         # st.write(EV_Revenue)
-
-                        fig = px.line(EV_Revenue2, y='EV/Revenue')
-                        st.plotly_chart(fig)
+                        if EV_Revenue2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('Enterprise value / Revenue ratio')
+                            fig = px.line(EV_Revenue2, y='EV/Revenue')
+                            st.plotly_chart(fig)
 
                     with col6:
                         st.subheader('')
 
-                        st.write('Enterprise value / EBITDA ratio')
                         EV_EBITDA2 = enterM2._EV_EBITDA()
                         # st.write(EV_EBITDA)
-
-                        fig = px.line(EV_EBITDA2, y='EV/EBITDA')
-                        st.plotly_chart(fig)
+                        if EV_EBITDA2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('Enterprise value / EBITDA ratio')
+                            fig = px.line(EV_EBITDA2, y='EV/EBITDA')
+                            st.plotly_chart(fig)
 
                     with col7:
                         st.subheader('')
@@ -337,39 +351,47 @@ elif model == 'Equity Ratios':
             with col1:
                 st.subheader('')
 
-                st.write('P/E ratio')
                 P_E = equityM.P_E()
-
-                fig = px.line(P_E, y='P/E ratio')
-                st.plotly_chart(fig)
+                if P_E.shape[0] == 0:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+                else:
+                    st.write('P/E ratio')
+                    fig = px.line(P_E, y='P/E ratio')
+                    st.plotly_chart(fig)
 
 
             with col2:
                 st.subheader('')
 
-                st.write('Price/Book ratio')
                 Price_Book = equityM.Price_Book()
-
-                fig = px.line(Price_Book, y='Price/Book')
-                st.plotly_chart(fig)
+                if Price_Book.shape[0] == 0:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+                else:
+                    st.write('Price/Book ratio')
+                    fig = px.line(Price_Book, y='Price/Book')
+                    st.plotly_chart(fig)
 
             with col3:
                 st.subheader(company_name)
 
-                st.write('Price/Sales ratio')
                 Price_Sales = equityM.Price_Sales()
-
-                fig = px.line(Price_Sales, y='Price/Sales')
-                st.plotly_chart(fig)
+                if Price_Sales.shape[0] == 0:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+                else:
+                    st.write('Price/Sales ratio')
+                    fig = px.line(Price_Sales, y='Price/Sales')
+                    st.plotly_chart(fig)
 
             with col3a:
                 st.subheader('')
 
-                st.write('Dividend yields(%)')
                 div_yield = equityM.dividend_yield()
-
-                fig = px.line(div_yield, y='Dividend yields(%)')
-                st.plotly_chart(fig)
+                if div_yield.shape[0] == 0:
+                    st.write(f"sorry can't retrive data for {company_name} Plase try with another company.")
+                else:
+                    st.write('Dividend yields(%)')
+                    fig = px.line(div_yield, y='Dividend yields(%)')
+                    st.plotly_chart(fig)
 
             symbol2 = ''
 
@@ -385,39 +407,47 @@ elif model == 'Equity Ratios':
                     with col4:
                         st.subheader('')
 
-                        st.write('P/E ratio')
                         P_E2 = equityM2.P_E()
-
-                        fig = px.line(P_E2, y='P/E ratio')
-                        st.plotly_chart(fig)
+                        if P_E2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('P/E ratio')
+                            fig = px.line(P_E2, y='P/E ratio')
+                            st.plotly_chart(fig)
 
 
                     with col5:
                         st.subheader('')
 
-                        st.write('Price/Book ratio')
                         Price_Book2 = equityM2.Price_Book()
-
-                        fig = px.line(Price_Book2, y='Price/Book')
-                        st.plotly_chart(fig)
+                        if Price_Book2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('Price/Book ratio')
+                            fig = px.line(Price_Book2, y='Price/Book')
+                            st.plotly_chart(fig)
 
                     with col6:
                         st.subheader(company_name2)
 
-                        st.write('Price/Sales ratio')
                         Price_Sales2 = equityM2.Price_Sales()
-
-                        fig = px.line(Price_Sales2, y='Price/Sales')
-                        st.plotly_chart(fig)
+                        if Price_Sales2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('Price/Sales ratio')
+                            fig = px.line(Price_Sales2, y='Price/Sales')
+                            st.plotly_chart(fig)
 
                     with col6a:
                         st.subheader('')
 
-                        st.write('Dividend yields(%)')
                         div_yield2 = equityM2.dividend_yield()
-
-                        fig = px.line(div_yield2, y='Dividend yields(%)')
-                        st.plotly_chart(fig)
+                        if div_yield2.shape[0] == 0:
+                            st.write(f"sorry can't retrive data for {company_name2} Plase try with another company.")
+                        else:
+                            st.write('Dividend yields(%)')
+                            fig = px.line(div_yield2, y='Dividend yields(%)')
+                            st.plotly_chart(fig)
 
                     with col7:
                         st.subheader('')
@@ -433,7 +463,7 @@ elif model == 'Equity Ratios':
                         st.plotly_chart(fig2)
 
                     with col8:
-                        st.subheader(f'{company_name} --- versus-- ')
+                        st.subheader(f'{company_name} -versus- ')
 
                         st.write('Price/Book ratio')
 
@@ -471,7 +501,7 @@ elif model == 'Equity Ratios':
 
                         st.plotly_chart(fig2) 
                 except Exception as e:
-                    st.write(f'Sorry we were not able to retrive {symbol}. Please try with another symbol or check if the symbol exists.')
+                    st.write(f'Sorry we were not able to retrive {symbol2}. Please try with another symbol or check if the symbol exists.')
         except Exception as e:
             st.write(f'Sorry we were not able to retrive {symbol}. Please try with another symbol or check if the symbol exists.')
 
